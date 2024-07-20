@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const { Client } = require('pg'); // Import the pg client for PostgreSQL
-
 const app = express();
 const port = 3000;
 
@@ -17,6 +16,9 @@ const client = new Client({
 // Connect to the PostgreSQL database
 client.connect();
 
+// Middleware to parse JSON bodies
+app.use(express.json());
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -25,45 +27,45 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
-// Route to serve the league HTML page
+// Route to serve the main HTML page
 app.get('/league.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
-// Function to get questions
-const getQuestions = async (gameId) => {
+// Function to get roles from the database
+const getRoles = async () => {
+  const query = 'SELECT * FROM roles'; // Adjust this query based on your schema
   try {
-    // Ensure the gameId is treated as an integer
-    const query = 'SELECT * FROM questions WHERE game_id = $1';
-    const { rows } = await client.query(query, [gameId]);
-    return rows;
+    const result = await client.query(query);
+    return result.rows;
   } catch (error) {
-    console.error('Error fetching questions:', error);
-    throw error;
+    console.error('Error fetching roles from database:', error);
+    throw new Error('Database query error');
   }
 };
 
-// Function to get roles
-const getRoles = async () => {
+// Function to get questions from the database based on game type
+const getQuestions = async (game) => {
+  const query = `
+    SELECT q.question_id, q.question_text, q.role_id
+    FROM questions q
+    JOIN games g ON q.game_id = g.game_id
+    WHERE g.game_name = $1
+  `;
   try {
-    const query = 'SELECT * FROM roles';
-    const { rows } = await client.query(query);
-    return rows;
+    const result = await client.query(query, [game]);
+    return result.rows;
   } catch (error) {
-    console.error('Error fetching roles:', error);
-    throw error;
+    console.error('Error fetching questions from database:', error);
+    throw new Error('Database query error');
   }
 };
 
 // Route to get questions
 app.get('/api/questions', async (req, res) => {
-  const gameId = parseInt(req.query.game, 10); // Convert game parameter to integer
-  if (isNaN(gameId)) {
-    return res.status(400).json({ error: 'Invalid game ID' });
-  }
-  
+  const game = req.query.game;
   try {
-    const questions = await getQuestions(gameId);
+    const questions = await getQuestions(game);
     res.json(questions);
   } catch (error) {
     console.error('Error fetching questions:', error);
@@ -79,6 +81,25 @@ app.get('/api/roles', async (req, res) => {
   } catch (error) {
     console.error('Error fetching roles:', error);
     res.status(500).json({ error: 'Error fetching roles' });
+  }
+});
+
+// Route to update scores
+app.post('/api/updateScores', async (req, res) => {
+  const { gameId, roleId, totalPoints } = req.body;
+  const query = `
+    INSERT INTO results (game_id, role_id, total_points)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (game_id, role_id)
+    DO UPDATE SET total_points = EXCLUDED.total_points
+  `;
+  const values = [gameId, roleId, totalPoints];
+  try {
+    await client.query(query, values);
+    res.status(200).send('Score updated successfully');
+  } catch (error) {
+    console.error('Error updating scores:', error);
+    res.status(500).send('Error updating scores');
   }
 });
 
