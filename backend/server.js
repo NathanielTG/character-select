@@ -58,7 +58,7 @@ app.get('/api/questions', async (req, res) => {
 // Route to fetch roles
 app.get('/api/roles', async (req, res) => {
   try {
-    const result = await client.query('SELECT role_id AS id, role_name FROM roles');
+    const result = await client.query('SELECT * FROM roles');
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching roles:', error);
