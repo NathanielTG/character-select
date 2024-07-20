@@ -1,60 +1,97 @@
-async function fetchQuestions(gameName) {
+document.addEventListener('DOMContentLoaded', async () => {
+  const questionContainer = document.getElementById('question');
+  const agreeButton = document.getElementById('agree');
+  const disagreeButton = document.getElementById('disagree');
+  let currentQuestionIndex = 0;
+  let userResponses = [];
+
+  // Initialize class scores
+  let classScores = {};
+
+  const fetchRoles = async () => {
     try {
-      const encodedGameName = encodeURIComponent(gameName);
-      const response = await fetch(`/api/questions?game=${encodedGameName}`);
-      
+      const response = await fetch('/api/roles');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      
-      const data = await response.json();
-      console.log('Fetched questions:', data); // Debug line to inspect data
-      return data;
+      const roles = await response.json();
+      roles.forEach(role => {
+        classScores[role.id] = { name: role.role_name, score: 0 };
+      });
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      questionContainer.innerHTML = 'Failed to load roles';
+    }
+  };
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await fetch('/api/questions?game=League of Legends');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const questions = await response.json();
+      if (questions.length === 0) {
+        questionContainer.innerHTML = 'No questions available';
+        return;
+      }
+      return questions;
     } catch (error) {
       console.error('Error fetching questions:', error);
-      return []; // Return an empty array if there's an error
+      questionContainer.innerHTML = 'Failed to load questions';
     }
-  }
-  
-  // Display the questions on the page
-  function displayQuestions(questions) {
-    const questionsContainer = document.getElementById('questions-container');
-    
-    if (questions.length === 0) {
-      questionsContainer.innerHTML = 'No questions available.';
-      return;
+  };
+
+  const displayQuestion = (questions, index) => {
+    if (index < questions.length) {
+      const question = questions[index];
+      questionContainer.innerHTML = question.question_text;
+    } else {
+      displayResults();
     }
-  
-    questions.forEach((question, index) => {
-      const questionElement = document.createElement('div');
-      questionElement.innerHTML = `
-        <p>${index + 1}. ${question.question_text}</p>
-        <button onclick="handleAnswer('agree')">Agree</button>
-        <button onclick="handleAnswer('disagree')">Disagree</button>
-      `;
-      questionsContainer.appendChild(questionElement);
+  };
+
+  const displayResults = () => {
+    // Calculate the highest-scoring role
+    let highestScoringRole = '';
+    let highestScore = 0;
+    for (const roleId in classScores) {
+      if (classScores[roleId].score > highestScore) {
+        highestScore = classScores[roleId].score;
+        highestScoringRole = classScores[roleId].name;
+      }
+    }
+
+    questionContainer.innerHTML = `Quiz completed! Your highest-scoring role is: ${highestScoringRole}.`;
+    agreeButton.style.display = 'none';
+    disagreeButton.style.display = 'none';
+    console.log('User Responses:', userResponses);
+  };
+
+  await fetchRoles();
+  const questions = await fetchQuestions();
+  if (questions) {
+    displayQuestion(questions, currentQuestionIndex);
+
+    agreeButton.addEventListener('click', () => {
+      const currentQuestion = questions[currentQuestionIndex];
+      userResponses.push({ question_id: currentQuestion.id, answer: 'Agree' });
+
+      // Update class scores
+      if (classScores[currentQuestion.role_id]) {
+        classScores[currentQuestion.role_id].score += 1;
+      }
+
+      currentQuestionIndex++;
+      displayQuestion(questions, currentQuestionIndex);
+    });
+
+    disagreeButton.addEventListener('click', () => {
+      const currentQuestion = questions[currentQuestionIndex];
+      userResponses.push({ question_id: currentQuestion.id, answer: 'Disagree' });
+
+      currentQuestionIndex++;
+      displayQuestion(questions, currentQuestionIndex);
     });
   }
-  
-  // Handle answer selection
-  async function handleAnswer(answer) {
-    // Assuming questions array is globally available
-    const currentQuestionIndex = parseInt(document.getElementById('current-question-index').value, 10);
-    const nextQuestionIndex = currentQuestionIndex + 1;
-  
-    if (nextQuestionIndex >= questions.length) {
-      alert('Quiz completed!');
-      return;
-    }
-  
-    // Display the next question
-    displayQuestions(questions[nextQuestionIndex]);
-  }
-  
-  // Initial setup
-  document.addEventListener('DOMContentLoaded', async () => {
-    const questions = await fetchQuestions('League of Legends');
-    console.log('Questions to display:', questions); // Debug line to check questions array
-    displayQuestions(questions);
-  });
-  
+});
