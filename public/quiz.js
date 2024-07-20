@@ -16,9 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       const roles = await response.json();
       roles.forEach(role => {
-        classScores[role.id] = { name: role.role_name, score: 0 };
+        classScores[role.role_id] = { name: role.role_name, score: 0 };
       });
-      console.log('Fetched Roles:', classScores); // Debugging
     } catch (error) {
       console.error('Error fetching roles:', error);
       questionContainer.innerHTML = 'Failed to load roles';
@@ -27,7 +26,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   const fetchQuestions = async () => {
     try {
-      const response = await fetch('/api/questions?game=League of Legends');
+      const gameId = 1; // Use the correct game_id for League of Legends
+      const response = await fetch(`/api/questions?game=${gameId}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         questionContainer.innerHTML = 'No questions available';
         return;
       }
-      console.log('Fetched Questions:', questions); // Debugging
       return questions;
     } catch (error) {
       console.error('Error fetching questions:', error);
@@ -48,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (index < questions.length) {
       const question = questions[index];
       questionContainer.innerHTML = question.question_text;
-      console.log('Displaying Question:', question); // Debugging
     } else {
       displayResults();
     }
@@ -57,24 +55,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const displayResults = () => {
     // Calculate the highest-scoring role
     let highestScoringRole = '';
-    let highestScore = -Infinity; // Initialize to a very low number
-  
+    let highestScore = -Infinity;
+    
     for (const roleId in classScores) {
-      console.log(`Role: ${classScores[roleId].name}, Score: ${classScores[roleId].score}`); // Debugging
       if (classScores[roleId].score > highestScore) {
         highestScore = classScores[roleId].score;
         highestScoringRole = classScores[roleId].name;
       }
     }
-  
+    
     // Display the result
     questionContainer.innerHTML = `Quiz completed! Your highest-scoring role is: ${highestScoringRole}.`;
     agreeButton.style.display = 'none';
     disagreeButton.style.display = 'none';
     console.log('User Responses:', userResponses);
-    console.log('Final Class Scores:', classScores); // Debugging
   };
-    
+  
   await fetchRoles();
   const questions = await fetchQuestions();
   if (questions) {
@@ -82,15 +78,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     agreeButton.addEventListener('click', () => {
       const currentQuestion = questions[currentQuestionIndex];
-      userResponses.push({ question_id: currentQuestion.id, answer: 'Agree' });
+      userResponses.push({ question_id: currentQuestion.question_id, answer: 'Agree' });
       
-      // Update class scores based on question role_id and answer
-      if (currentQuestion.agree_scores) {
-        for (const [roleId, points] of Object.entries(currentQuestion.agree_scores)) {
-          if (classScores[roleId]) {
-            classScores[roleId].score += points;
-          }
-        }
+      // Update class scores
+      if (classScores[currentQuestion.role_id]) {
+        classScores[currentQuestion.role_id].score += 1;
       }
       
       currentQuestionIndex++;
@@ -99,16 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     disagreeButton.addEventListener('click', () => {
       const currentQuestion = questions[currentQuestionIndex];
-      userResponses.push({ question_id: currentQuestion.id, answer: 'Disagree' });
-      
-      // Update class scores based on question role_id and answer
-      if (currentQuestion.disagree_scores) {
-        for (const [roleId, points] of Object.entries(currentQuestion.disagree_scores)) {
-          if (classScores[roleId]) {
-            classScores[roleId].score += points;
-          }
-        }
-      }
+      userResponses.push({ question_id: currentQuestion.question_id, answer: 'Disagree' });
       
       currentQuestionIndex++;
       displayQuestion(questions, currentQuestionIndex);

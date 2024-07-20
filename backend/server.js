@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { Client } = require('pg'); // Import the pg client for PostgreSQL
+
 const app = express();
 const port = 3000;
 
@@ -24,48 +25,63 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
-// Route to serve the main HTML page
+// Route to serve the league HTML page
 app.get('/league.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
-// Route to serve the quiz questions based on the game
-app.get('/api/questions', async (req, res) => {
-  const gameName = req.query.game; // Get the game from the query parameter
-
-  if (!gameName) {
-    return res.status(400).json({ error: 'Game name is required' });
-  }
-
+// Function to get questions
+const getQuestions = async (gameId) => {
   try {
-    // Fetch the game_id based on the game name
-    const gameResult = await client.query('SELECT game_id FROM games WHERE game_name = $1', [gameName]);
-    if (gameResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Game not found' });
-    }
-
-    const gameId = gameResult.rows[0].game_id;
-
-    // Fetch the questions related to the specified game
-    const result = await client.query('SELECT * FROM questions WHERE game_id = $1', [gameId]);
-    res.json(result.rows); // Send the questions as JSON
+    // Ensure the gameId is treated as an integer
+    const query = 'SELECT * FROM questions WHERE game_id = $1';
+    const { rows } = await client.query(query, [gameId]);
+    return rows;
   } catch (error) {
     console.error('Error fetching questions:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    throw error;
+  }
+};
+
+// Function to get roles
+const getRoles = async () => {
+  try {
+    const query = 'SELECT * FROM roles';
+    const { rows } = await client.query(query);
+    return rows;
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    throw error;
+  }
+};
+
+// Route to get questions
+app.get('/api/questions', async (req, res) => {
+  const gameId = parseInt(req.query.game, 10); // Convert game parameter to integer
+  if (isNaN(gameId)) {
+    return res.status(400).json({ error: 'Invalid game ID' });
+  }
+  
+  try {
+    const questions = await getQuestions(gameId);
+    res.json(questions);
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    res.status(500).json({ error: 'Error fetching questions' });
   }
 });
 
-// Route to fetch roles
+// Route to get roles
 app.get('/api/roles', async (req, res) => {
   try {
-    const result = await client.query('SELECT * FROM roles');
-    res.json(result.rows);
+    const roles = await getRoles();
+    res.json(roles);
   } catch (error) {
     console.error('Error fetching roles:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Error fetching roles' });
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
