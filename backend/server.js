@@ -24,9 +24,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
-// Route to serve the league HTML page
+// Route to serve the main HTML page
 app.get('/league.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public', 'league.html'));
+  res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
 // Route to serve the quiz questions based on the game
@@ -41,7 +41,6 @@ app.get('/api/questions', async (req, res) => {
     // Fetch the game_id based on the game name
     const gameResult = await client.query('SELECT game_id FROM games WHERE game_name = $1', [gameName]);
     if (gameResult.rows.length === 0) {
-      console.log('Game not found');
       return res.status(404).json({ error: 'Game not found' });
     }
 
@@ -49,10 +48,20 @@ app.get('/api/questions', async (req, res) => {
 
     // Fetch the questions related to the specified game
     const result = await client.query('SELECT * FROM questions WHERE game_id = $1', [gameId]);
-    console.log('Fetched questions:', result.rows); // Log the questions
     res.json(result.rows); // Send the questions as JSON
   } catch (error) {
     console.error('Error fetching questions:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Route to fetch roles
+app.get('/api/roles', async (req, res) => {
+  try {
+    const result = await client.query('SELECT role_id AS id, role_name FROM roles');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching roles:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

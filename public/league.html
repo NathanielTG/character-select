@@ -7,9 +7,14 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>League of Legends Quiz</h1>
-  <div id="questions-container">Loading...</div>
-  <input type="hidden" id="current-question-index" value="0">
+  <div class="quiz-container">
+    <h1>League of Legends Quiz</h1>
+    <div id="question" class="question">Loading...</div>
+    <div class="buttons">
+      <button id="agree" class="agree-button">Agree</button>
+      <button id="disagree" class="disagree-button">Disagree</button>
+    </div>
+  </div>
   <script src="quiz.js"></script>
 </body>
 </html>
