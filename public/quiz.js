@@ -101,12 +101,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     let scores = [];
     try {
       const response = await fetch('/api/scores?gameId=1'); // Ensure this matches your game_id
-      scores = await response.json();
-      console.log('Fetched scores:', scores); // Debugging
+      const contentType = response.headers.get('content-type');
+  
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+      
+      if (contentType && contentType.includes('application/json')) {
+        scores = await response.json();
+        console.log('Fetched scores:', scores); // Debugging
+      } else {
+        throw new Error('Received non-JSON response');
+      }
     } catch (error) {
       console.error('Error fetching scores:', error);
+      questionContainer.innerHTML = 'Failed to load scores';
+      return;
     }
-  
+    
     // Determine the highest-scoring class
     let highestScoringClass = '';
     let highestScore = -Infinity;
@@ -119,6 +131,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         highestScore = totalScore;
         highestScoringClass = classScores[roleId].name;
       }
+    }
+  
+    // Log the scores to the console
+    console.log('Class Scores at the end of the quiz:');
+    for (const roleId in classScores) {
+      const score = scores.find(score => score.role_id == roleId);
+      const totalScore = score ? score.total_points : classScores[roleId].score;
+      console.log(`${classScores[roleId].name}: ${totalScore}`);
     }
   
     // Subclasses information
@@ -167,18 +187,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   
     subclassHTML += '</div>';
   
-    // Display results
-    let resultHTML = '<h3>Quiz completed! Your scores are:</h3><ul>';
-  
-    for (const roleId in classScores) {
-      const score = scores.find(score => score.role_id == roleId);
-      const totalScore = score ? score.total_points : classScores[roleId].score;
-  
-      resultHTML += `<li>${classScores[roleId].name}: ${totalScore}</li>`;
-    }
-  
-    resultHTML += '</ul>';
-    resultHTML += `<p>Your highest-scoring role is: ${highestScoringClass}.</p>`;
+    // Display results on the webpage
+    let resultHTML = `<p>Your highest-scoring role is: ${highestScoringClass}.</p>`;
     resultHTML += subclassHTML;
   
     questionContainer.innerHTML = resultHTML;
@@ -187,7 +197,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('User Responses:', userResponses);
     console.log('Class Scores:', classScores);
   };
-  
+    
   // Initialize data and event listeners
   await fetchRoles();
   const questions = await fetchQuestions();
