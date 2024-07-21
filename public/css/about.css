@@ -1,0 +1,121 @@
+/* Universal Styling */
+* {
+    font-family: 'Inter';
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+@media only screen and (max-width: 425px) {
+    h1 {
+        font-weight: 900;
+        font-size: 2rem;
+        width: 10rem;
+        text-align: left;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    h6 {
+        font-weight: 300;
+        font-size: 0.813rem;
+    }
+    
+    .highlight {
+        background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Header Styling */
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 1rem;
+        width: 100%;
+        height: auto;
+    }
+    
+    nav {
+        width: 100%; /* Takes away 100% of it's parent */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    main {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+
+        /* Dropdown Menu */
+        #ms {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background-color: white;
+            text-align: center;
+            transition: all ease-in 5s;
+        }
+        
+        #ms ul {
+            list-style: none;
+            width: 100%;
+        }
+        
+        #ms a {
+            color: #090B0C;
+            text-decoration: none;
+        }
+        
+        #ms-header {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            height: auto;
+            padding: 1rem;
+        }
+        
+        #ms-options {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+        
+        #ms-options li {
+            margin: 1rem;
+        }
+
+    /* Page Content */
+    article {
+        margin: .5rem 0rem;
+    }
+
+    article * {
+        margin: .5rem 0rem;
+    }
+
+    a {
+        color: #fdbb2d;
+    }
+}
