@@ -66,7 +66,7 @@
 }
 
 @media only screen and (max-width: 475px) {
-        h1 {
+    h1 {
         font-weight: 900;
         font-size: 2rem;
         width: 10rem;
@@ -127,51 +127,49 @@
         margin: .5rem;
     }
 
+    /* Dropdown Menu */
+    #ms {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        background-color: white;
+        text-align: center;
+        transition: all ease-in 5s;
+    }
     
-
-        /* Dropdown Menu */
-        #ms {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            background-color: white;
-            text-align: center;
-            transition: all ease-in 5s;
-        }
-        
-        #ms ul {
-            list-style: none;
-            width: 100%;
-        }
-        
-        #ms a {
-            color: #090B0C;
-            text-decoration: none;
-        }
-        
-        #ms-header {
-            display: flex;
-            align-items: flex-start;
-            width: 100%;
-            height: auto;
-            padding: 1rem;
-        }
-        
-        #ms-options {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 1rem;
-            font-size: 1.25rem;
-            font-weight: 500;
-        }
-        
-        #ms-options li {
-            margin: 1rem;
-        }
+    #ms ul {
+        list-style: none;
+        width: 100%;
+    }
+    
+    #ms a {
+        color: #090B0C;
+        text-decoration: none;
+    }
+    
+    #ms-header {
+        display: flex;
+        align-items: flex-start;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+    }
+    
+    #ms-options {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+    
+    #ms-options li {
+        margin: 1rem;
+    }
 }
