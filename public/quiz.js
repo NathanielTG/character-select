@@ -97,31 +97,89 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const displayResults = async () => {
-    // Calculate the highest-scoring role
-    let highestScoringRole = '';
+    // Fetch scores from the backend
+    let scores = [];
+    try {
+      const response = await fetch('/api/scores?gameId=1'); // Ensure this matches your game_id
+      scores = await response.json();
+      console.log('Fetched scores:', scores); // Debugging
+    } catch (error) {
+      console.error('Error fetching scores:', error);
+    }
+  
+    // Determine the highest-scoring class
+    let highestScoringClass = '';
     let highestScore = -Infinity;
   
     for (const roleId in classScores) {
-      const score = classScores[roleId].score;
-      if (score > highestScore) {
-        highestScore = score;
-        highestScoringRole = classScores[roleId].name;
+      const score = scores.find(score => score.role_id == roleId);
+      const totalScore = score ? score.total_points : classScores[roleId].score;
+  
+      if (totalScore > highestScore) {
+        highestScore = totalScore;
+        highestScoringClass = classScores[roleId].name;
       }
     }
-
-    // Display the subclasses for the highest-scoring role
-    const subclasses = classSubclasses[highestScoringRole] || [];
-    let resultHTML = `<h3>Quiz completed! Your highest-scoring role is: ${highestScoringRole}</h3><ul>`;
   
-    subclasses.forEach(subclass => {
-      resultHTML += `
-        <li>
-          <img src="${subclassImages[subclass]}" alt="${subclass}">
-          <p>${subclassDescriptions[subclass]}</p>
-        </li>
+    // Subclasses information
+    const subclasses = {
+      Mage: [
+        { name: 'Battlemage', image: '/images/battlemage.webp', description: 'A powerful mage who excels in close combat.' },
+        { name: 'Artillery', image: '/images/artillery.webp', description: 'A mage who deals damage from a distance.' },
+        { name: 'Burst', image: '/images/burst.webp', description: 'A mage with high burst damage.' }
+      ],
+      Marksman: [
+        { name: 'Marksman', image: '/images/marksman.webp', description: 'A ranged fighter with high damage output.' }
+      ],
+      Fighter: [
+        { name: 'Diver', image: '/images/diver.webp', description: 'A fighter who excels at diving into the enemy backline.' },
+        { name: 'Juggernaut', image: '/images/juggernaut.webp', description: 'A fighter with high durability and damage.' }
+      ],
+      Tank: [
+        { name: 'Vanguard', image: '/images/vanguard.webp', description: 'A tank with a focus on front-line defense.' },
+        { name: 'Warden', image: '/images/warden.webp', description: 'A tank with high crowd control abilities.' }
+      ],
+      Controller: [
+        { name: 'Catcher', image: '/images/catcher.webp', description: 'A controller with abilities to catch and hold enemies.' },
+        { name: 'Enchanter', image: '/images/enchanter.webp', description: 'A controller who can enchant allies and debuff enemies.' }
+      ],
+      Slayer: [
+        { name: 'Assassin', image: '/images/assassin.webp', description: 'A slayer who excels at taking down high-value targets.' },
+        { name: 'Skirmisher', image: '/images/skirmisher.webp', description: 'A slayer with high mobility and versatility.' }
+      ]
+    };
+  
+    // Get the subclasses for the highest-scoring class
+    const highestScoringClassSubclasses = subclasses[highestScoringClass] || [];
+  
+    // Generate HTML for the subclasses
+    let subclassHTML = '<h3>Subclasses for your highest-scoring class:</h3><div class="subclass-container">';
+  
+    highestScoringClassSubclasses.forEach(subclass => {
+      subclassHTML += `
+        <div class="subclass">
+          <img src="${subclass.image}" alt="${subclass.name}">
+          <h4>${subclass.name}</h4>
+          <p>${subclass.description}</p>
+        </div>
       `;
     });
+  
+    subclassHTML += '</div>';
+  
+    // Display results
+    let resultHTML = '<h3>Quiz completed! Your scores are:</h3><ul>';
+  
+    for (const roleId in classScores) {
+      const score = scores.find(score => score.role_id == roleId);
+      const totalScore = score ? score.total_points : classScores[roleId].score;
+  
+      resultHTML += `<li>${classScores[roleId].name}: ${totalScore}</li>`;
+    }
+  
     resultHTML += '</ul>';
+    resultHTML += `<p>Your highest-scoring role is: ${highestScoringClass}.</p>`;
+    resultHTML += subclassHTML;
   
     questionContainer.innerHTML = resultHTML;
     agreeButton.style.display = 'none';
@@ -129,7 +187,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('User Responses:', userResponses);
     console.log('Class Scores:', classScores);
   };
-
+  
   // Initialize data and event listeners
   await fetchRoles();
   const questions = await fetchQuestions();
