@@ -8,6 +8,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize class scores
   let classScores = {};
 
+  const classSubclasses = {
+    "Mage": ["Battlemage", "Artillery", "Burst"],
+    "Marksman": ["Marksman"],
+    "Fighter": ["Diver", "Juggernaut"],
+    "Tank": ["Vanguard", "Warden"],
+    "Controller": ["Catcher", "Enchanter"],
+    "Slayer": ["Assassin", "Skirmisher"]
+  };
+
+  const subclassImages = {
+    "Battlemage": "path/to/battlemage.jpg",
+    "Artillery": "path/to/artillery.jpg",
+    "Burst": "path/to/burst.jpg",
+    "Marksman": "path/to/marksman.jpg",
+    "Diver": "path/to/diver.jpg",
+    "Juggernaut": "path/to/juggernaut.jpg",
+    "Vanguard": "path/to/vanguard.jpg",
+    "Warden": "path/to/warden.jpg",
+    "Catcher": "path/to/catcher.jpg",
+    "Enchanter": "path/to/enchanter.jpg",
+    "Assassin": "path/to/assassin.jpg",
+    "Skirmisher": "path/to/skirmisher.jpg"
+  };
+
+  const subclassDescriptions = {
+    "Battlemage": "Description of Battlemage",
+    "Artillery": "Description of Artillery",
+    "Burst": "Description of Burst",
+    "Marksman": "Description of Marksman",
+    "Diver": "Description of Diver",
+    "Juggernaut": "Description of Juggernaut",
+    "Vanguard": "Description of Vanguard",
+    "Warden": "Description of Warden",
+    "Catcher": "Description of Catcher",
+    "Enchanter": "Description of Enchanter",
+    "Assassin": "Description of Assassin",
+    "Skirmisher": "Description of Skirmisher"
+  };
+
   const fetchRoles = async () => {
     try {
       const response = await fetch('/api/roles');
@@ -26,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await fetch('/api/questions?game=League of Legends');
+      const response = await fetch('/api/questions?game=1'); // Ensure this matches your game_id
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -58,36 +97,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const displayResults = async () => {
-    // Fetch scores from the backend
-    let scores = [];
-    try {
-      const response = await fetch('/api/scores?gameId=1'); // Ensure this matches your game_id
-      scores = await response.json();
-      console.log('Fetched scores:', scores); // Debugging
-    } catch (error) {
-      console.error('Error fetching scores:', error);
-    }
-  
     // Calculate the highest-scoring role
     let highestScoringRole = '';
     let highestScore = -Infinity;
   
-    let resultHTML = '<h3>Quiz completed! Your scores are:</h3><ul>';
-  
     for (const roleId in classScores) {
-      const score = scores.find(score => score.role_id == roleId);
-      const totalScore = score ? score.total_points : classScores[roleId].score;
-  
-      if (totalScore > highestScore) {
-        highestScore = totalScore;
+      const score = classScores[roleId].score;
+      if (score > highestScore) {
+        highestScore = score;
         highestScoringRole = classScores[roleId].name;
       }
-  
-      resultHTML += `<li>${classScores[roleId].name}: ${totalScore}</li>`;
     }
+
+    // Display the subclasses for the highest-scoring role
+    const subclasses = classSubclasses[highestScoringRole] || [];
+    let resultHTML = `<h3>Quiz completed! Your highest-scoring role is: ${highestScoringRole}</h3><ul>`;
   
+    subclasses.forEach(subclass => {
+      resultHTML += `
+        <li>
+          <img src="${subclassImages[subclass]}" alt="${subclass}">
+          <p>${subclassDescriptions[subclass]}</p>
+        </li>
+      `;
+    });
     resultHTML += '</ul>';
-    resultHTML += `<p>Your highest-scoring role is: ${highestScoringRole}.</p>`;
   
     questionContainer.innerHTML = resultHTML;
     agreeButton.style.display = 'none';
@@ -95,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('User Responses:', userResponses);
     console.log('Class Scores:', classScores);
   };
-    
+
   // Initialize data and event listeners
   await fetchRoles();
   const questions = await fetchQuestions();
@@ -110,8 +144,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Update class scores
         if (classScores[currentQuestion.role_id]) {
           classScores[currentQuestion.role_id].score += 1;
-          // Update scores on the server
-          updateScores(1, currentQuestion.role_id, classScores[currentQuestion.role_id].score); // Make sure gameId is correct
         }
 
         currentQuestionIndex++;
@@ -129,8 +161,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Update class scores
         if (classScores[currentQuestion.role_id]) {
           classScores[currentQuestion.role_id].score -= 1; // Assuming you want to subtract points for 'Disagree'
-          // Update scores on the server
-          updateScores(1, currentQuestion.role_id, classScores[currentQuestion.role_id].score); // Make sure gameId is correct
         }
 
         currentQuestionIndex++;
@@ -140,17 +170,4 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }
-
-  // Function to update scores on the server
-  const updateScores = async (gameId, roleId, totalPoints) => {
-    try {
-      await fetch('/api/updateScores', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId, roleId, totalPoints })
-      });
-    } catch (error) {
-      console.error('Error updating score:', error);
-    }
-  };
 });
