@@ -2,33 +2,101 @@ document.addEventListener('DOMContentLoaded', () => {
   const questionContainer = document.getElementById('question');
   const agreeButton = document.getElementById('agree');
   const disagreeButton = document.getElementById('disagree');
+  const backButton = document.getElementById('back');
   let currentQuestionIndex = 0;
   let userResponses = [];
-  
-  // Initialize class scores
+  let previousStates = [];
+
   let classScores = {
-    1: { name: 'Mage', score: 0 },
-    2: { name: 'Tank', score: 0 },
-    3: { name: 'Marksman', score: 0 },
-    4: { name: 'Fighter', score: 0 },
-    5: { name: 'Slayer', score: 0 },
+    1: { name: 'Tank', score: 0 },
+    2: { name: 'Fighter', score: 0 },
+    3: { name: 'Slayer', score: 0 },
+    4: { name: 'Mage', score: 0 },
+    5: { name: 'Marksman', score: 0 },
     6: { name: 'Controller', score: 0 },
   };
 
   const questions = [
     {
-      question_text: 'Do you prefer ranged attacks?',
-      role_id: 1,
-      agree_score: 3,
-      disagree_score: -3
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
     },
     {
-      question_text: 'Do you enjoy tanking damage?',
-      role_id: 2,
-      agree_score: 3,
-      disagree_score: -3
-    }
-    // Add more questions as needed
+      question_text: 'I will gladly sacrifice a greater health pool and defensive capabilities, if it means that I can increase my damage potential.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
+    {
+      question_text: 'I will sacrifice power early if it means I get to be a stronger threat later.',
+      role_scores: { 1: 2, 2: 3 } // role_id: score
+    },
   ];
 
   const displayQuestion = () => {
@@ -40,14 +108,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const updateScores = (roleId, points) => {
-    if (classScores[roleId]) {
-      classScores[roleId].score += points;
+  const updateScores = (roleScores, points) => {
+    for (const [roleId, score] of Object.entries(roleScores)) {
+      if (classScores[roleId]) {
+        classScores[roleId].score += points * score;
+      }
+    }
+  };
+
+  const handleAnswer = (isAgree) => {
+    const currentQuestion = questions[currentQuestionIndex];
+    if (currentQuestion) {
+      previousStates.push({
+        index: currentQuestionIndex,
+        responses: [...userResponses],
+        scores: { ...classScores }
+      });
+
+      userResponses.push({
+        question_id: currentQuestion.question_id,
+        answer: isAgree ? 'Agree' : 'Disagree'
+      });
+
+      const score = isAgree ? 1 : -1; // 1 point for agree, -1 point for disagree
+      if (!isNaN(score)) {
+        updateScores(currentQuestion.role_scores, score);
+      } else {
+        console.error(`Invalid score value: ${isAgree ? currentQuestion.agree_score : currentQuestion.disagree_score}`);
+      }
+
+      currentQuestionIndex++;
+      displayQuestion();
+    }
+  };
+
+  const handleBack = () => {
+    if (previousStates.length > 0) {
+      const lastState = previousStates.pop();
+      currentQuestionIndex = lastState.index;
+      userResponses = lastState.responses;
+      classScores = lastState.scores;
+      displayQuestion();
     }
   };
 
   const displayResults = () => {
-    // Determine the highest-scoring class
     let highestScoringClass = '';
     let highestScore = -Infinity;
 
@@ -59,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Display results
     let resultHTML = '<h3>Quiz completed! Your scores are:</h3><ul>';
     for (const roleId in classScores) {
       resultHTML += `<li>${classScores[roleId].name}: ${classScores[roleId].score}</li>`;
@@ -70,28 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
     questionContainer.innerHTML = resultHTML;
     agreeButton.style.display = 'none';
     disagreeButton.style.display = 'none';
-  };
-
-  const handleAnswer = (isAgree) => {
-    const currentQuestion = questions[currentQuestionIndex];
-    if (currentQuestion) {
-      userResponses.push({ question_id: currentQuestion.question_id, answer: isAgree ? 'Agree' : 'Disagree' });
-
-      const score = isAgree ? Number(currentQuestion.agree_score) : Number(currentQuestion.disagree_score);
-      if (!isNaN(score)) {
-        updateScores(currentQuestion.role_id, score);
-      } else {
-        console.error(`Invalid score value: ${isAgree ? currentQuestion.agree_score : currentQuestion.disagree_score}`);
-      }
-
-      currentQuestionIndex++;
-      displayQuestion();
-    }
+    backButton.style.display = 'none'; 
   };
 
   agreeButton.addEventListener('click', () => handleAnswer(true));
   disagreeButton.addEventListener('click', () => handleAnswer(false));
+  backButton.addEventListener('click', handleBack);
 
-  // Start the quiz
   displayQuestion();
 });
