@@ -1,40 +1,44 @@
-/* Universal Styles */
-
+/* Universal Styling */
 * {
     font-family: 'Inter';
-    box-sizing: border-box;
-    padding: 0px;
     margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
 }
 
-/* Holds Styling For ALL Mobile Devices */
+.highlight {
+    background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+h1 {
+    font-weight: 900;
+}
+
+h3 {
+    font-weight: 600;
+}
+
+/* CSS Styling For All Mobile Devices */
 @media only screen and (max-width: 425px) {
+    /* TEXT STYLING */
     h1 {
-        font-weight: 900;
         font-size: 2rem;
-        width: 10rem;
-        text-align: left;
-    }
-    
-    h2 {
-        font-size: 1.125rem;
-        font-weight: 600;
-    }
-    
-    h6 {
-        font-weight: 300;
-        font-size: 0.813rem;
-    }
-    
-    .highlight {
-        background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
     }
 
-    /* Header Styling */
+    p {
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    h3 {
+        font-size: 1.125rem;
+    }
+    
+    /* HEADER STYLING */
     header {
         display: flex;
         align-items: center;
@@ -51,46 +55,43 @@
         align-items: center;
         justify-content: space-between;
     }
-    
+
+    /* Body Styling */
     main {
         display: flex;
         align-items: flex-start;
         justify-content: flex-start;
         flex-direction: column;
-        text-align: center;
+        text-align: left;
         padding: 1rem;
     }
-    
-    main * {
-        margin: .5rem 0rem;
-    }
-    
-    main article {
+
+    figure {
         width: 100%;
-    }
-    
-    /* Game Cards */
-    .game-option {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #090b0c;
-        color: white;
-        padding: 0.625rem;
-        margin: 0.625rem 0rem;
-        width: 100%;
-        height: 9.375rem;
-        border-radius: 0.313rem;
-        border: none;
-        text-decoration: none;
-    }
-    
-    .game-option:active {
-        background-color: #fdbb2d;
     }
 
-    
-    /* Dropdown Menu */
+    figure img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .title-container {
+        margin-bottom: 0.5rem;
+    }
+    .title-container *{
+        margin: .5rem 0rem;
+    }
+
+    .role-container {
+        width: 100%;
+    }
+
+    .role-container * {
+        margin: 0.875rem 0rem;
+    }
+
+    /* MENU OPTIONS STYLING */
     #ms {
         display: none;
         flex-direction: column;
@@ -134,5 +135,16 @@
     
     #ms-options li {
         margin: 1rem;
+    }
+
+    /* CHARACTER TYPE STYLING */
+    .character-type {
+        background-color: #090B0C;
+        width: 100%;
+    }
+
+    .icon {
+        width: 5rem;
+        height: 5rem;
     }
 }

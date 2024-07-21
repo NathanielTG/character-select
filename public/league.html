@@ -1,20 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>League of Legends Quiz</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="quiz-container">
-    <h1>League of Legends Quiz</h1>
-    <div id="question" class="question">Loading...</div>
-    <div class="buttons">
-      <button id="agree" class="agree-button">Agree</button>
-      <button id="disagree" class="disagree-button">Disagree</button>
-    </div>
-  </div>
-  <script src="quiz.js"></script>
-</body>
+<html>
+    <head>
+        <title>Character Select: Game Catalog</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/gameinfo.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    </head>
+    <body>
+        <div id = "ms">
+            <div id = "ms-header">
+                <span id = "exit" class="material-symbols-outlined">
+                    close
+                </span>
+            </div>
+            <div id = "ms-options">
+                <ul>
+                    <a href="index.html"><li>HOME</li></a>
+                    <a href="about.html"><li>ABOUT</li></a>
+                    <a href="game-catalog.html"><li>GAME CATALOG</li></a>
+                </ul>
+            </div>
+        </div>
+        <header>
+            <nav role = "navigation">
+                <h1>C<span class = "highlight">S</span></h1>
+                <span id = "menu" class="material-symbols-outlined">
+                    menu
+                </span>
+            </nav>
+        </header>
+        <main>
+          <article class = "title-container">
+            <h1>LEAGUE OF LEGENDS</h1>
+            <p>5v5 | MOBA</p>
+            <figure>
+              <img src="lol-art.jpg" alt="League of Legends splash art of multiple characters">
+            </figure>
+            <p>
+              League of Legends is a 5v5 team-based MOBA (Massively Online Battle Arena) in which teams duke it out to claim objectives and destroy the other team’s nexus. 
+              With over 100+ different champions all spread across different rolls, there is almost always going to be a character for everyone!
+            </p>
+          </article>
+          <article class = "role-container">
+              <div>
+                  <div class = "character-type">
+                      HI
+                  </div>
+                  <h3>SLAYER</h3>
+                  <p>
+                    Slayers are low health, high mobility characters boasting high burst damage to blow up the health bars of unexpecting lower health targets.
+                  </p>
+              </div>
+              <div>
+                  <div class = "character-type">
+                      HI
+                  </div>
+                  <h3>MAGE</h3>
+                  <p>
+                    Mages are offensive spell casters who seek to take down their opponents with potent and powerful spells.
+                  </p>
+              </div>
+              <div>
+                  <div class = "character-type">
+                      HI
+                  </div>
+                  <h3>MARKSMAN</h3>
+                  <p>
+                    While being very fragile, Marksmen seek to deal high sustained damage to their opponents while avoiding incoming attacks.  
+                  </p>
+              </div>
+              <div>
+                  <div class = "character-type">
+                      HI
+                  </div>
+                  <h3>FIGHTER</h3>
+                  <p>
+                    Fighters are durable and rely on their damage focused kit to thrive in the thick of a fight.
+                  </p>
+              </div>
+              <div>
+                <div class = "character-type">
+                    HI
+                </div>
+                <h3>TANK</h3>
+                <p>
+                  Tanks boast a high health pool and an ability to shrug off incoming damage with ease. Their aim is to disrupt their opponents and support their team.
+                </p>
+            </div>
+            <div>
+              <div class = "character-type">
+                  HI
+              </div>
+              <h3>CONTROLLER</h3>
+              <p>
+                Controllers oversee the battlefield by assisting their team with defensive abilities and opening up opportunities to open up the opposition.
+              </p>
+          </div>
+          </article>
+        </main>
+        <script src="js/screenHeight.js"></script>
+        <script src="js/menuButton.js"></script>
+    </body>
 </html>
