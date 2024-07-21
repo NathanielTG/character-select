@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-const { Client } = require('pg'); // Import the pg client for PostgreSQL
-const cors = require('cors'); // Add this line to import cors
+const { Client } = require('pg');
+const cors = require('cors');
 const app = express();
 const port = 3000;
 
@@ -10,7 +10,7 @@ const client = new Client({
   user: 'capa',
   host: 'localhost',
   database: 'quizdb',
-  password: 'capa', // Update with your database password
+  password: 'capa',
   port: 5432,
 });
 
@@ -19,7 +19,7 @@ client.connect();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-app.use(cors()); // Add this line to use cors
+app.use(cors());
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, '../public')));
@@ -49,6 +49,14 @@ const getRoles = async () => {
   return res.rows;
 };
 
+// Helper function to get scores from the database
+const getScores = async (gameId) => {
+  const query = 'SELECT role_id, total_points FROM results WHERE game_id = $1';
+  const values = [gameId];
+  const res = await client.query(query, values);
+  return res.rows;
+};
+
 // Route to get questions
 app.get('/api/questions', async (req, res) => {
   const game = req.query.game;
@@ -69,6 +77,18 @@ app.get('/api/roles', async (req, res) => {
   } catch (error) {
     console.error('Error fetching roles:', error);
     res.status(500).json({ error: 'Error fetching roles' });
+  }
+});
+
+// Route to get scores
+app.get('/api/scores', async (req, res) => {
+  const gameId = req.query.gameId;
+  try {
+    const scores = await getScores(gameId);
+    res.json(scores);
+  } catch (error) {
+    console.error('Error fetching scores:', error);
+    res.status(500).json({ error: 'Error fetching scores' });
   }
 });
 
