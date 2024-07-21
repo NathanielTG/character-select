@@ -3,19 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>League of Legends Quiz</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>League Quiz</title>
 </head>
 <body>
-  <div class="quiz-container">
-    <h1>League of Legends Quiz</h1>
-    <div id="question" class="question">Loading...</div>
-    <div class="buttons">
-      <button id="agree" class="agree-button">Agree</button>
-      <button id="disagree" class="disagree-button">Disagree</button>
-      <div id="scores"></div> <!-- Container for displaying scores -->
-      <button id="back">Back</button>
-    </div>
+  <div id="quiz-container">
+    <div id="question"></div>
+    <div id="options"></div>
+    <button id="agree">Agree</button>
+    <button id="disagree">Disagree</button>
+    <button id="back">Back</button>
   </div>
   <script src="leaguequiz.js"></script>
 </body>
