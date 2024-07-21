@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { Client } = require('pg'); // Import the pg client for PostgreSQL
+const cors = require('cors'); // Add this line to import cors
 const app = express();
 const port = 3000;
 
@@ -18,6 +19,7 @@ client.connect();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(cors()); // Add this line to use cors
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, '../public')));
@@ -32,33 +34,19 @@ app.get('/league.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
-// Function to get roles from the database
-const getRoles = async () => {
-  const query = 'SELECT * FROM roles'; // Adjust this query based on your schema
-  try {
-    const result = await client.query(query);
-    return result.rows;
-  } catch (error) {
-    console.error('Error fetching roles from database:', error);
-    throw new Error('Database query error');
-  }
+// Helper function to get questions from the database
+const getQuestions = async (game) => {
+  const query = 'SELECT question_id, question_text, role_id FROM questions WHERE game_id = $1';
+  const values = [game];
+  const res = await client.query(query, values);
+  return res.rows;
 };
 
-// Function to get questions from the database based on game type
-const getQuestions = async (game) => {
-  const query = `
-    SELECT q.question_id, q.question_text, q.role_id
-    FROM questions q
-    JOIN games g ON q.game_id = g.game_id
-    WHERE g.game_name = $1
-  `;
-  try {
-    const result = await client.query(query, [game]);
-    return result.rows;
-  } catch (error) {
-    console.error('Error fetching questions from database:', error);
-    throw new Error('Database query error');
-  }
+// Helper function to get roles from the database
+const getRoles = async () => {
+  const query = 'SELECT role_id, role_name FROM roles';
+  const res = await client.query(query);
+  return res.rows;
 };
 
 // Route to get questions
