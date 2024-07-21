@@ -1,0 +1,120 @@
+* {
+    font-family: 'Inter';
+    box-sizing: border-box;
+    padding: 0px;
+    margin: 0px;
+}
+
+h1 {
+    font-weight: 900;
+    font-size: 2rem;
+}
+
+h6 {
+    font-weight: 300;
+    font-size: 0.813rem;
+}
+
+.highlight {
+    background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 1rem;
+    width: 100%;
+    height: auto;
+}
+
+nav {
+    width: 100%; /* Takes away 100% of it's parent */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+main {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+}
+
+body {
+    position: relative;
+}
+
+main h6, main h1 {
+    margin-bottom: 1rem;
+}
+
+.cta-button {
+    background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
+    color: white;
+    width: auto;
+    height: auto;
+    padding: 1rem;
+    border-radius: 0.313rem;
+    text-decoration: none;
+}
+
+.material-symbols-outlined {
+    height: 100%;
+    color: #090B0C;
+    cursor: pointer;
+}
+
+#ms {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background-color: white;
+    text-align: center;
+    transition: all ease-in 5s;
+}
+
+#ms ul {
+    list-style: none;
+    width: 100%;
+}
+
+#ms a {
+    color: #090B0C;
+    text-decoration: none;
+}
+
+#ms-header {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+}
+
+#ms-options {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+#ms-options li {
+    margin: 1rem;
+}

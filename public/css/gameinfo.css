@@ -1,0 +1,150 @@
+/* Universal Styling */
+* {
+    font-family: 'Inter';
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.highlight {
+    background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+h1 {
+    font-weight: 900;
+}
+
+h3 {
+    font-weight: 600;
+}
+
+/* CSS Styling For All Mobile Devices */
+@media only screen and (max-width: 425px) {
+    /* TEXT STYLING */
+    h1 {
+        font-size: 2rem;
+    }
+
+    p {
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    h3 {
+        font-size: 1.125rem;
+    }
+    
+    /* HEADER STYLING */
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 1rem;
+        width: 100%;
+        height: auto;
+    }
+    
+    nav {
+        width: 100%; /* Takes away 100% of it's parent */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Body Styling */
+    main {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        flex-direction: column;
+        text-align: left;
+        padding: 1rem;
+    }
+
+    figure {
+        width: 100%;
+    }
+
+    figure img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .title-container {
+        margin-bottom: 0.5rem;
+    }
+    .title-container *{
+        margin: .5rem 0rem;
+    }
+
+    .role-container {
+        width: 100%;
+    }
+
+    .role-container * {
+        margin: 0.875rem 0rem;
+    }
+
+    /* MENU OPTIONS STYLING */
+    #ms {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        background-color: white;
+        text-align: center;
+        transition: all ease-in 5s;
+    }
+    
+    #ms ul {
+        list-style: none;
+        width: 100%;
+    }
+    
+    #ms a {
+        color: #090B0C;
+        text-decoration: none;
+    }
+    
+    #ms-header {
+        display: flex;
+        align-items: flex-start;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+    }
+    
+    #ms-options {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+    
+    #ms-options li {
+        margin: 1rem;
+    }
+
+    /* CHARACTER TYPE STYLING */
+    .character-type {
+        background-color: #090B0C;
+        width: 100%;
+    }
+
+    .icon {
+        width: 5rem;
+        height: 5rem;
+    }
+}
