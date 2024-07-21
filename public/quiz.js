@@ -96,108 +96,111 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
+  const updateScores = (roleId, points) => {
+    if (classScores[roleId]) {
+      classScores[roleId].score += points;
+    }
+  };
+
   const displayResults = async () => {
     // Fetch scores from the backend
-    let scores = [];
+    let scoresFromServer = [];
     try {
-      const response = await fetch('/api/scores?gameId=1'); // Ensure this matches your game_id
-      const contentType = response.headers.get('content-type');
-  
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-      
-      if (contentType && contentType.includes('application/json')) {
-        scores = await response.json();
-        console.log('Fetched scores:', scores); // Debugging
-      } else {
-        throw new Error('Received non-JSON response');
-      }
+        const response = await fetch('/api/scores?gameId=1'); // Ensure this matches your game_id
+        scoresFromServer = await response.json();
+        console.log('Fetched scores:', scoresFromServer); // Debugging
     } catch (error) {
-      console.error('Error fetching scores:', error);
-      questionContainer.innerHTML = 'Failed to load scores';
-      return;
+        console.error('Error fetching scores:', error);
     }
+
+    // Combine server scores with local scores
+    let combinedScores = { ...classScores };
     
+    scoresFromServer.forEach(score => {
+        if (combinedScores[score.role_id]) {
+            combinedScores[score.role_id].score += score.total_points; // Aggregate server scores with local scores
+        } else {
+            combinedScores[score.role_id] = { name: score.role_name, score: score.total_points };
+        }
+    });
+
     // Determine the highest-scoring class
     let highestScoringClass = '';
     let highestScore = -Infinity;
-  
-    for (const roleId in classScores) {
-      const score = scores.find(score => score.role_id == roleId);
-      const totalScore = score ? score.total_points : classScores[roleId].score;
-  
-      if (totalScore > highestScore) {
-        highestScore = totalScore;
-        highestScoringClass = classScores[roleId].name;
-      }
+
+    for (const roleId in combinedScores) {
+        const totalScore = combinedScores[roleId].score;
+
+        if (totalScore > highestScore) {
+            highestScore = totalScore;
+            highestScoringClass = combinedScores[roleId].name;
+        }
     }
-  
-    // Log the scores to the console
-    console.log('Class Scores at the end of the quiz:');
-    for (const roleId in classScores) {
-      const score = scores.find(score => score.role_id == roleId);
-      const totalScore = score ? score.total_points : classScores[roleId].score;
-      console.log(`${classScores[roleId].name}: ${totalScore}`);
-    }
-  
+
     // Subclasses information
     const subclasses = {
-      Mage: [
-        { name: 'Battlemage', image: '/images/battlemage.webp', description: 'A powerful mage who excels in close combat.' },
-        { name: 'Artillery', image: '/images/artillery.webp', description: 'A mage who deals damage from a distance.' },
-        { name: 'Burst', image: '/images/burst.webp', description: 'A mage with high burst damage.' }
-      ],
-      Marksman: [
-        { name: 'Marksman', image: '/images/marksman.webp', description: 'A ranged fighter with high damage output.' }
-      ],
-      Fighter: [
-        { name: 'Diver', image: '/images/diver.webp', description: 'A fighter who excels at diving into the enemy backline.' },
-        { name: 'Juggernaut', image: '/images/juggernaut.webp', description: 'A fighter with high durability and damage.' }
-      ],
-      Tank: [
-        { name: 'Vanguard', image: '/images/vanguard.webp', description: 'A tank with a focus on front-line defense.' },
-        { name: 'Warden', image: '/images/warden.webp', description: 'A tank with high crowd control abilities.' }
-      ],
-      Controller: [
-        { name: 'Catcher', image: '/images/catcher.webp', description: 'A controller with abilities to catch and hold enemies.' },
-        { name: 'Enchanter', image: '/images/enchanter.webp', description: 'A controller who can enchant allies and debuff enemies.' }
-      ],
-      Slayer: [
-        { name: 'Assassin', image: '/images/assassin.webp', description: 'A slayer who excels at taking down high-value targets.' },
-        { name: 'Skirmisher', image: '/images/skirmisher.webp', description: 'A slayer with high mobility and versatility.' }
-      ]
+        Mage: [
+            { name: 'Battlemage', image: '/images/battlemage.webp', description: 'A powerful mage who excels in close combat.' },
+            { name: 'Artillery', image: '/images/artillery.webp', description: 'A mage who deals damage from a distance.' },
+            { name: 'Burst', image: '/images/burst.webp', description: 'A mage with high burst damage.' }
+        ],
+        Marksman: [
+            { name: 'Marksman', image: '/images/marksman.webp', description: 'A ranged fighter with high damage output.' }
+        ],
+        Fighter: [
+            { name: 'Diver', image: '/images/diver.webp', description: 'A fighter who excels at diving into the enemy backline.' },
+            { name: 'Juggernaut', image: '/images/juggernaut.webp', description: 'A fighter with high durability and damage.' }
+        ],
+        Tank: [
+            { name: 'Vanguard', image: '/images/vanguard.webp', description: 'A tank with a focus on front-line defense.' },
+            { name: 'Warden', image: '/images/warden.webp', description: 'A tank with high crowd control abilities.' }
+        ],
+        Controller: [
+            { name: 'Catcher', image: '/images/catcher.webp', description: 'A controller with abilities to catch and hold enemies.' },
+            { name: 'Enchanter', image: '/images/enchanter.webp', description: 'A controller who can enchant allies and debuff enemies.' }
+        ],
+        Slayer: [
+            { name: 'Assassin', image: '/images/assassin.webp', description: 'A slayer who excels at taking down high-value targets.' },
+            { name: 'Skirmisher', image: '/images/skirmisher.webp', description: 'A slayer with high mobility and versatility.' }
+        ]
     };
-  
+
     // Get the subclasses for the highest-scoring class
     const highestScoringClassSubclasses = subclasses[highestScoringClass] || [];
-  
+
     // Generate HTML for the subclasses
     let subclassHTML = '<h3>Subclasses for your highest-scoring class:</h3><div class="subclass-container">';
-  
+
     highestScoringClassSubclasses.forEach(subclass => {
-      subclassHTML += `
-        <div class="subclass">
-          <img src="${subclass.image}" alt="${subclass.name}">
-          <h4>${subclass.name}</h4>
-          <p>${subclass.description}</p>
-        </div>
-      `;
+        subclassHTML += `
+            <div class="subclass">
+              <img src="${subclass.image}" alt="${subclass.name}">
+              <h4>${subclass.name}</h4>
+              <p>${subclass.description}</p>
+            </div>
+        `;
     });
-  
+
     subclassHTML += '</div>';
-  
-    // Display results on the webpage
-    let resultHTML = `<p>Your highest-scoring role is: ${highestScoringClass}.</p>`;
+
+    // Display results
+    let resultHTML = '<h3>Quiz completed! Your scores are:</h3><ul>';
+
+    for (const roleId in combinedScores) {
+        resultHTML += `<li>${combinedScores[roleId].name}: ${combinedScores[roleId].score}</li>`;
+    }
+
+    resultHTML += '</ul>';
+    resultHTML += `<p>Your highest-scoring role is: ${highestScoringClass}.</p>`;
     resultHTML += subclassHTML;
-  
+
     questionContainer.innerHTML = resultHTML;
     agreeButton.style.display = 'none';
     disagreeButton.style.display = 'none';
     console.log('User Responses:', userResponses);
-    console.log('Class Scores:', classScores);
-  };
-    
+    console.log('Class Scores:', combinedScores);
+};
+  
   // Initialize data and event listeners
   await fetchRoles();
   const questions = await fetchQuestions();
@@ -208,34 +211,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       const currentQuestion = questions[currentQuestionIndex];
       if (currentQuestion) {
         userResponses.push({ question_id: currentQuestion.question_id, answer: 'Agree' });
-
+    
         // Update class scores
         if (classScores[currentQuestion.role_id]) {
           classScores[currentQuestion.role_id].score += 1;
         }
-
+    
+        console.log('Updated Scores after Agree:', classScores); // Log scores after Agree
+    
         currentQuestionIndex++;
         displayQuestion(questions, currentQuestionIndex);
       } else {
         console.error('Current question is undefined:', currentQuestionIndex);
       }
     });
-
+    
     disagreeButton.addEventListener('click', () => {
       const currentQuestion = questions[currentQuestionIndex];
       if (currentQuestion) {
         userResponses.push({ question_id: currentQuestion.question_id, answer: 'Disagree' });
-
+    
         // Update class scores
         if (classScores[currentQuestion.role_id]) {
           classScores[currentQuestion.role_id].score -= 1; // Assuming you want to subtract points for 'Disagree'
         }
-
+    
+        console.log('Updated Scores after Disagree:', classScores); // Log scores after Disagree
+    
         currentQuestionIndex++;
         displayQuestion(questions, currentQuestionIndex);
       } else {
         console.error('Current question is undefined:', currentQuestionIndex);
       }
     });
-  }
+      }
 });
