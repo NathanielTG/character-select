@@ -12,7 +12,7 @@ exitButton.addEventListener('click', displayMenu);
 const menuScreen = document.getElementById('ms');
 //Grabs Menu Options Div
 const menuOptions = document.getElementById('ms-options');
-//Grabs Height Of 
+//Grabs Height Of Menu
 const menuHeaderHeight = document.getElementById('ms-header').offsetHeight;
 
 const headerHeight = document.querySelector('header').offsetHeight;

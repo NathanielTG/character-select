@@ -85,6 +85,7 @@ main h6, main h1 {
     z-index: 2;
     background-color: white;
     text-align: center;
+    transition: all ease-in 5s;
 }
 
 #ms ul {
@@ -96,7 +97,6 @@ main h6, main h1 {
     color: #090B0C;
     text-decoration: none;
 }
-
 
 #ms-header {
     display: flex;

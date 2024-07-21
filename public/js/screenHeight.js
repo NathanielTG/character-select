@@ -4,7 +4,7 @@ function setMainHeight() {
     const header = document.querySelector('header');
     const main = document.querySelector('main');
     const headerHeight = header.offsetHeight;
-    main.style.height = `calc(100vh - ${headerHeight}px)`;
+    main.style.minHeight = `calc(100vh - ${headerHeight}px)`;
 }
 
 // Set the main height on page load
